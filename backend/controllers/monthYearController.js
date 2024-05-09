@@ -1,36 +1,3 @@
-
-
-function generateCalendar(year) {
-    let calendarText = `Calendar for Year ${year}\n\n`;
-  
-    for (let month = 0; month < 12; month++) {
-      const monthName = new Date(year, month, 1).toLocaleString('default', { month: 'long' });
-      calendarText += `${monthName}<br><br>`;
-  
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-  
-      for (let day = firstDay.getDate(); day <= lastDay.getDate(); day++) {
-        const date = new Date(year, month, day);
-        calendarText += `${date.toDateString()}<br>`;
-      }
-  
-      calendarText += '<br><br>';
-    }
-  
-    return calendarText;
-  }
-
-const getCalendar = async (req, res) => {
-    if(!req?.params?.id) return res.status(400).json({'message': 'Calender Year is required'})
-  
-    const calendarText = generateCalendar(req.params.id);
-
-    res.set('Content-Type', 'text/plain');
-    res.send(calendarText);
-}
-
-
 var ABOUT = "\u00C2m l\u1ECBch Vi\u1EC7t Nam - Version 0.8"+"\n\u00A9 2004 H\u1ED3 Ng\u1ECDc \u0110\u1EE9c [http://come.to/duc]";
 var TK19 = new Array(
 	0x30baa3, 0x56ab50, 0x422ba0, 0x2cab61, 0x52a370, 0x3c51e8, 0x60d160, 0x4ae4b0, 0x376926, 0x58daa0,
@@ -84,9 +51,9 @@ var TK22 = new Array(
 		0x465aa0, 0x30ada5, 0x5695d0, 0x404ad0, 0x2aa9b3, 0x50a4d0, 0x3ad2b7, 0x5eb250, 0x48b540, 0x33d556
 ); /* Years 2100-2199 */
 
-var CAN = new Array("Gi\xe1p", "\u1EA4t", "B\xednh", "\u0110inh", "M\u1EADu", "K\u1EF7", "Canh", "T\xe2n", "Nh\xe2m", "Qu\xfd");
-var CHI = new Array("T\xfd", "S\u1EEDu", "D\u1EA7n", "M\xe3o", "Th\xecn", "T\u1EF5", "Ng\u1ECD", "M\xf9i", "Th\xe2n", "D\u1EADu", "Tu\u1EA5t", "H\u1EE3i");
-var TUAN = new Array("Ch\u1EE7 nh\u1EADt", "Th\u1EE9 hai", "Th\u1EE9 ba", "Th\u1EE9 t\u01B0", "Th\u1EE9 n\u0103m", "Th\u1EE9 s\xe1u", "Th\u1EE9 b\u1EA3y");
+var CAN = new Array("Gi\\341p", "\\u1EA4t", "B\\355nh", "\\u0110inh", "M\\u1EADu", "K\\u1EF7", "Canh", "T\\342n", "Nh\\342m", "Qu\\375");
+var CHI = new Array("T\\375", "S\\u1EEDu", "D\\u1EA7n", "M\\343o", "Th\\354n", "T\\u1EF5", "Ng\\u1ECD", "M\\371i", "Th\\342n", "D\\u1EADu", "Tu\\u1EA5t", "H\\u1EE3i");
+var TUAN = new Array("Ch\\u1EE7 nh\\u1EADt", "Th\\u1EE9 hai", "Th\\u1EE9 ba", "Th\\u1EE9 t\\u01B0", "Th\\u1EE9 n\\u0103m", "Th\\u1EE9 s\\341u", "Th\\u1EE9 b\\u1EA3y");
 var GIO_HD = new Array("110100101100", "001101001011", "110011010010", "101100110100", "001011001101", "010010110011");
 var TIETKHI = new Array("Xu\u00E2n ph\u00E2n", "Thanh minh", "C\u1ED1c v\u0169", "L\u1EADp h\u1EA1", "Ti\u1EC3u m\u00E3n", "Mang ch\u1EE7ng",
 	"H\u1EA1 ch\u00ED", "Ti\u1EC3u th\u1EED", "\u0110\u1EA1i th\u1EED", "L\u1EADp thu", "X\u1EED th\u1EED", "B\u1EA1ch l\u1ED9",
@@ -229,7 +196,7 @@ function getLunarDate(dd, mm, yyyy) {
  * Algorithm from: "Astronomical Algorithms" by Jean Meeus, 1998
  */
 function SunLongitude(jdn) {
-	var T, T2, dr, M, L0, DL, lambda, theta, omega;
+	var T, T2, dr, M, L0, DL, L;
 	T = (jdn - 2451545.0 ) / 36525; // Time in Julian centuries from 2000-01-01 12:00:00 GMT
 	T2 = T*T;
 	dr = PI/180; // degree to radian
@@ -237,14 +204,10 @@ function SunLongitude(jdn) {
 	L0 = 280.46645 + 36000.76983*T + 0.0003032*T2; // mean longitude, degree
 	DL = (1.914600 - 0.004817*T - 0.000014*T2)*Math.sin(dr*M);
 	DL = DL + (0.019993 - 0.000101*T)*Math.sin(dr*2*M) + 0.000290*Math.sin(dr*3*M);
-    theta = L0 + DL; // true longitude, degree
-    // obtain apparent longitude by correcting for nutation and aberration
-    omega = 125.04 - 1934.136 * T;
-    lambda = theta - 0.00569 - 0.00478 * Math.sin(omega * dr);
-    // Convert to radians
-    lambda = lambda*dr;
-	lambda = lambda - PI*2*(INT(lambda/(PI*2))); // Normalize to (0, 2*PI)
-    return lambda;
+	L = L0 + DL; // true longitude, degree
+	L = L*dr;
+	L = L - PI*2*(INT(L/(PI*2))); // Normalize to (0, 2*PI)
+	return L;
 }
 
 /* Compute the sun segment at start (00:00) of the day with the given integral Julian day number.
@@ -332,7 +295,7 @@ function getDayName(lunarDate) {
 		return "";
 	}
 	var cc = getCanChi(lunarDate);
-	var s = "Ng\u00E0y " + cc[0] +", th\xe1ng "+cc[1] + ", n\u0103m " + cc[2];
+	var s = "Ng\u00E0y " + cc[0] +", th\\341ng "+cc[1] + ", n\u0103m " + cc[2];
 	return s;
 }
 
@@ -363,7 +326,7 @@ function getDayString(lunar, solarDay, solarMonth, solarYear) {
 	var dayOfWeek = TUAN[(lunar.jd + 1) % 7];
 	s = dayOfWeek + " " + solarDay + "/" + solarMonth + "/" + solarYear;
 	s += " -+- ";
-	s = s + "Ng\u00E0y " + lunar.day+" th\xe1ng "+lunar.month;
+	s = s + "Ng\u00E0y " + lunar.day+" th\\341ng "+lunar.month;
 	if (lunar.leap == 1) {
 		s = s + " nhu\u1EADn";
 	}
@@ -427,15 +390,36 @@ function setOutputSize(size) {
 	PRINT_OPTS.tableWidth = TAB_WIDTHS[idx];
 }
 
+const printSelectedMonth = (req, res) => {
+	//getSelectedMonth();
+	if(!req?.query?.month){
+		currentMonth = parseInt(10);
+	}
+	currentMonth = parseInt(req?.query?.month);
 
-function printYear(yy) {
-	//var yearName = getPrevYearLink(yy)+" N&#x103;m " + getYearCanChi(yy) + " " + yy +" "+getNextYearLink(yy);
-	//var yearName = getPrevYearLink(yy)+" N&#x103;m " + yy +" "+getNextYearLink(yy);
-	var yearName = " Năm " + yy;
+	if(!req?.query?.year){
+		currentYear = parseInt(10);
+	}
+	currentYear = parseInt(req?.query?.year);
+
+	res.set('Content-Type', 'text/plain');
+	res.send(printMonth(currentMonth, currentYear));
+}
+
+function printMonth(mm, yy) {
 	var res = "";
 	res += printStyle();
-	res += '<table class="thang" border="2" cellpadding="1" cellspacing="1" align=center>\n';
-	res += ('<tr><td colspan="3" class="tennam">'+yearName+'</td></tr>\n');
+	res += printTable(mm, yy);
+	res += printFoot();
+	return res;
+}
+
+function printYear(yy) {
+	var yearName = "N&#x103;m " + getYearCanChi(yy) + " " + yy;
+	var res = "";
+	res += printStyle();
+	res += '<table align=center>\n';
+	res += ('<tr><td colspan="3" class="tennam" onClick="showYearSelect();">'+yearName+'</td></tr>\n');
 	for (var i = 1; i<= 12; i++) {
 		if (i % 3 == 1) res += '<tr>\n';
 		res += '<td>\n';
@@ -446,6 +430,11 @@ function printYear(yy) {
 	res += '<table>\n';
 	res += printFoot();
 	return res;
+}
+
+function printSelectedYear() {
+	getSelectedMonth();
+	return printYear(currentYear);
 }
 
 function printStyle() {
@@ -482,7 +471,7 @@ function printTable(mm, yy) {
 	var MonthHead = mm + "/" + yy;
 	var LunarHead = getYearCanChi(ld1.year);
 	var res = "";
-	res += ('<table class="thang" border="0" cellpadding="10" cellspacing="10" width="'+PRINT_OPTS.tableWidth+'">\n');
+	res += ('<table class="thang" border="2" cellpadding="1" cellspacing="1" width="'+PRINT_OPTS.tableWidth+'">\n');
 	res += printHead(mm, yy);
 	for (i = 0; i < 6; i++) {
 		res += ("<tr>\n");
@@ -501,19 +490,34 @@ function printTable(mm, yy) {
 	res += ('</table>\n');
 	return res;
 }
-function getPrevYearLink(yy) {
-	//return '<a href="'+window.location.pathname+'?yy='+(yy-1)+'&mm='+mm+'"><img src="left2.gif" width=16 height=12 alt="PrevYear" border=0></a>';
-	return '<a href="/calendar?year='+(yy-1)+'">&lt;&lt;</a>';
+
+function getPrevMonthLink(mm, yy) {
+	var mm1 = mm > 1 ? mm-1 : 12;
+	var yy1 = mm > 1 ? yy : yy-1;
+	//return '<a href="'+'window.location.pathname'+'?yy='+yy1+'&mm='+mm1+'"><img src="left1.gif" width=8 height=12 alt="PrevMonth" border=0></a>';
+	return '<a href="'+'window.location.pathname'+'?yy='+yy1+'&mm='+mm1+'">&lt;</a>';
 }
 
-function getNextYearLink(yy) {
-	//return '<a href="'+window.location.pathname+'?yy='+(yy+1)+'&mm='+mm+'"><img src="right2.gif" width=16 height=12 alt="NextYear" border=0></a>';
-	return '<a href="/calendar?year='+(yy+1)+'">&gt;&gt;</a>';
+function getNextMonthLink(mm, yy) {
+	var mm1 = mm < 12 ? mm+1 : 1;
+	var yy1 = mm < 12 ? yy : yy+1;
+	//return '<a href="'+'window.location.pathname'+'?yy='+yy1+'&mm='+mm1+'"><img src="right1.gif" width=8 height=12 alt="NextMonth" border=0></a>';
+	return '<a href="'+'window.location.pathname'+'?yy='+yy1+'&mm='+mm1+'">&gt;</a>';
+}
+
+function getPrevYearLink(mm, yy) {
+	//return '<a href="'+'window.location.pathname'+'?yy='+(yy-1)+'&mm='+mm+'"><img src="left2.gif" width=16 height=12 alt="PrevYear" border=0></a>';
+	return '<a href="'+'window.location.pathname'+'?yy='+(yy-1)+'&mm='+mm+'">&lt;&lt;</a>';
+}
+
+function getNextYearLink(mm, yy) {
+	//return '<a href="'+'window.location.pathname'+'?yy='+(yy+1)+'&mm='+mm+'"><img src="right2.gif" width=16 height=12 alt="NextYear" border=0></a>';
+	return '<a href="'+'window.location.pathname'+'?yy='+(yy+1)+'&mm='+mm+'">&gt;&gt;</a>';
 }
 
 function printHead(mm, yy) {
 	var res = "";
-	var monthName = "tháng "+mm;
+	var monthName = "Tháng "+mm+"/"+yy;
 	//res += ('<tr><td colspan="7" class="tenthang" onClick="showMonthSelect();">'+monthName+'</td></tr>\n');
 	res += ('<tr><td colspan="2" class="navi-l">'+'&nbsp;'+'</td>\n');
 	//res += ('<td colspan="1" class="navig"><a href="'+getPrevMonthLink(mm, yy)+'"><img src="left1.gif" alt="Prev"></a></td>\n');
@@ -571,8 +575,15 @@ function printCell(lunarDate, solarDate, solarMonth, solarYear) {
 
 function printFoot() {
 	var res = "";
-	res += '<script language="JavaScript" src="http://www.informatik.uni-leipzig.de/~duc/amlich/JavaScript/amlich-hnd.js"></script>\n';
+	res += '<script language="JavaScript" src="amlich-hnd.js"></script>\n';
 	return res;
+}
+
+function showMonthSelect() {
+	var home = "http://www.ifis.uni-luebeck.de/~duc/amlich/JavaScript/";
+	window.open(home, "win2702", "menubar=yes,scrollbars=yes,status=yes,toolbar=yes,resizable=yes,location=yes");
+	//window.location = home;
+	//alertAbout();
 }
 
 function showYearSelect() {
@@ -605,26 +616,6 @@ function showVietCal() {
 	window.window.setTimeout("showVietCal()",5000);
 }
 
-const printSelectedYear = (req, res) => {
-	
-  	setOutputSize("small");
-
-	res.set('Content-Type', 'text/plain');
-
-	if(req.query?.month && req.query?.year){
-		const monthYear = require("./monthYearController");
-		monthYear.printSelectedMonth(req, res)
-		return;
-	}
-
-	if(req.query?.year){
-  		res.send(printYear(parseInt(req.query.year)));
-	}else{
-		res.send(printYear(2023));
-	}
-}
-
 module.exports = {
-    getCalendar,
-    printSelectedYear
+    printSelectedMonth
 }

@@ -28,6 +28,9 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, '/public')));
 
 // routes
+app.get('/cronjob', (req, res) => {
+    res.sendStatus(200);
+});
 app.use('/calendar', require('./routes/api/calendar'));
 
 app.all('*', (req, res) => {

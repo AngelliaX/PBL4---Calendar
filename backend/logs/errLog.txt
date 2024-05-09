@@ -96,3 +96,11 @@
 20231003	10:31:02	2a55866d-f922-492f-9d50-f0bdd5f653dd	Error: Cannot set headers after they are sent to the client
 20231003	10:31:04	2feee28b-da7e-4cbf-b2f9-64ecb714fa6a	Error: Cannot set headers after they are sent to the client
 20231003	10:34:42	9047caa6-cc18-4311-ab11-7e324fc10006	Error: Cannot set headers after they are sent to the client
+20231028	10:39:52	4dfaa649-1a53-40ec-9bf7-b6d9ac4a4791	ReferenceError: window is not defined
+20231028	10:40:43	e490cd20-cab4-4939-a060-6f4c83030a43	ReferenceError: window is not defined
+20231028	10:42:53	869c9cdc-1384-48d8-8070-cde6713797d7	Error: Cannot remove headers after they are sent to the client
+20231028	10:42:57	812ca1e5-9ec3-49b4-ae48-a887119859f7	Error: Cannot remove headers after they are sent to the client
+20231028	10:43:48	1c5a2641-240e-479e-bf99-6e65bc8eed7a	Error: Cannot remove headers after they are sent to the client
+20231028	10:43:54	7bc3014e-b978-44a2-b544-55c0009f40dd	Error: Cannot remove headers after they are sent to the client
+20231028	10:43:56	cd6a7f6e-5e67-40e1-b1bc-11a57ed42f9d	Error: Cannot remove headers after they are sent to the client
+20231028	10:46:51	3dab358c-7467-4197-a013-eac9b64377cf	Error: Cannot remove headers after they are sent to the client
