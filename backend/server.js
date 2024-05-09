@@ -30,6 +30,10 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 // routes
 app.use('/calendar', require('./routes/api/calendar'));
 
+app.use('/cronjob', (req, res) => {
+    return res.sendStatus(204);
+});
+
 app.all('*', (req, res) => {
     res.status(404);
     if (req.accepts('json')) {
